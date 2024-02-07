@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Spatial Service Test</title>
+</head>
+<body>
+    <h2>Spatial Service Client Test</h2>
+    <button id="getLocationBtn">Get My Location</button>
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('getLocationBtn').addEventListener('click', function() {
+            if (!navigator.geolocation) {
+                document.getElementById('result').textContent = 'Geolocation is not supported by your browser';
+            } else {
+                document.getElementById('result').textContent = 'Locating…';
+                navigator.geolocation.getCurrentPosition(success, error);
+            }
+        });
+
+        function success(position) {
+            const latitude  = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
+            fetch(`http://localhost:3000/get_boundary_info?lat=${latitude}&lon=${longitude}&clientapp=WebCasino-DEV`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    document.getElementById('result').textContent = 'Error fetching data';
+                });
+        }
+
+        function error() {
+            document.getElementById('result').textContent = 'Unable to retrieve your location';
+        }
+    </script>
+</body>
+</html>
