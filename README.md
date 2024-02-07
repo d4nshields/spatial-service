@@ -1,4 +1,4 @@
-# My Spatial Service
+# DEMO: Spatial Service
 
 ## Description
 This project provides a web service to find which state or province a given latitude and longitude is in and how far it is from the nearest border.
@@ -16,12 +16,23 @@ This project provides a web service to find which state or province a given lati
 ```bash
 npm install
 ```
-3. Set up your PostgreSQL database and import the `boundaries` data from the `data/` directory.    For this to work you should have a postgres user set up called 'geo' with required grants for access to the 'boundaries' schema.
+3. Set up your PostgreSQL server with PostGIS extensions, create a database and import the `boundaries` data from the `data/` directory.
+4. Set up a postgres user with required grants for access to the 'boundaries' schema.
 ```bash
 pg_restore -U geo -d boundaries -1 data/boundaries.dump
 ```
-4. Copy `.env.example` to `.env` and update it with your database credentials and application token.
-5. Run the service:
+
+5. The following environment variables must be set in the environment for the server to find and connec to the PostGIS server:
+```bash
+export DB_USER=<your db user>
+export DB_PASSWORD=<your db password>
+export DB_HOST=localhost
+export DB_PORT=5432
+export DB_NAME=boundaries
+export CLIENT_APP_TOKEN=WebCasino-DEV
+```
+
+6. Run the service:
 ```bash
 npm start
 ```
