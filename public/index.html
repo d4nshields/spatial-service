@@ -6,27 +6,21 @@
 </head>
 <body>
     <h2>Spatial Service Client Test</h2>
-    <button id="getLocationBtn">Get My Location</button>
+    <button onclick="getLocation()">Get My Location</button>
+    <button onclick="queryBoundaryInfo(49.2827, -123.1207)">Vancouver, BC</button>
+    <button onclick="queryBoundaryInfo(51.0447, -114.0719)">Calgary, AB</button>
+    <button onclick="queryBoundaryInfo(45.5019, -73.5674)">Montreal, QC</button>
+    <button onclick="queryBoundaryInfo(39.3643, -74.4229)">Atlantic City, NJ</button>
+    <button onclick="queryBoundaryInfo(40.2732, -76.8867)">Harrisburg, PA</button>
+    
     <div id="result"></div>
 
     <script>
-        document.getElementById('getLocationBtn').addEventListener('click', function() {
-            if (!navigator.geolocation) {
-                document.getElementById('result').textContent = 'Geolocation is not supported by your browser';
-            } else {
-                document.getElementById('result').textContent = 'Locating…';
-                navigator.geolocation.getCurrentPosition(success, error);
-            }
-        });
-
-        function success(position) {
-            const latitude  = position.coords.latitude;
-            const longitude = position.coords.longitude;
-
-            fetch(`http://localhost:3000/get_boundary_info?lat=${latitude}&lon=${longitude}&clientapp=WebCasino-DEV`)
+        function queryBoundaryInfo(lat, lon) {
+            fetch(`http://localhost:3000/get_boundary_info?lat=${lat}&lon=${lon}&clientapp=WebCasino-DEV`)
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+                    document.getElementById('result').innerHTML = `Location: ${data.name}<br>Distance to border: ${data.distance_to_border_meters} meters`;
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
@@ -34,8 +28,16 @@
                 });
         }
 
-        function error() {
-            document.getElementById('result').textContent = 'Unable to retrieve your location';
+        function getLocation() {
+            if (!navigator.geolocation) {
+                document.getElementById('result').textContent = 'Geolocation is not supported by your browser';
+            } else {
+                document.getElementById('result').textContent = 'Locating…';
+                navigator.geolocation.getCurrentPosition(
+                    (position) => queryBoundaryInfo(position.coords.latitude, position.coords.longitude),
+                    () => document.getElementById('result').textContent = 'Unable to retrieve your location'
+                );
+            }
         }
     </script>
 </body>

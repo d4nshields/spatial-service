@@ -35,7 +35,7 @@ app.get('/get_boundary_info', async (req, res) => {
     try {
         // First, find the state or province the point is in
         const locationQueryResult = await pool.query(
-            `SELECT name, iso_3166_2 FROM ne_50m_admin_1_states_provinces WHERE ST_Contains(geom, ST_SetSRID(ST_MakePoint($1, $2), 4326))`,
+            `SELECT name, iso_3166_2 FROM ne_10m_admin_1_states_provinces WHERE ST_Contains(geom, ST_SetSRID(ST_MakePoint($1, $2), 4326))`,
             [lon, lat]
         );
 
@@ -51,9 +51,9 @@ app.get('/get_boundary_info', async (req, res) => {
         const distanceQuery = `
             SELECT ST_Distance(
                 ST_Transform(ST_SetSRID(ST_MakePoint($1, $2), 4326), 3857),
-                ST_Transform((SELECT ST_Boundary(geom) FROM ne_50m_admin_1_states_provinces WHERE iso_3166_2 = $3), 3857)
+                ST_Transform((SELECT ST_Boundary(geom) FROM ne_10m_admin_1_states_provinces WHERE iso_3166_2 = $3), 3857)
             ) AS distance_meters
-            FROM ne_50m_admin_1_states_provinces
+            FROM ne_10m_admin_1_states_provinces
             WHERE iso_3166_2 = $3`;
 
         // Log the query with placeholders and the parameters array

@@ -4,7 +4,7 @@
   "description": "A spatial service to find state or province boundaries and distances to them.",
   "main": "src/index.js",
   "scripts": {
-    "start": "ts-node src/index.js",
+    "start": "ts-node src/index.ts",
     "build": "tsc",
     "dev": "nodemon --ext ts --exec ts-node src/index.ts"
   },
