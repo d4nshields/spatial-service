@@ -2,6 +2,8 @@ import express from 'express';
 import { Pool } from 'pg';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import https from 'https';
+import fs from 'fs';
 
 dotenv.config();
 
@@ -72,6 +74,15 @@ app.get('/get_boundary_info', async (req, res) => {
     }
 });
 
-app.listen(port, () => {
-    console.log(`Spatial service running at http://localhost:${port}`);
+// Read the SSL certificate files
+const privateKey = fs.readFileSync('./devkey.pem', 'utf8');
+const certificate = fs.readFileSync('./devcert.pem', 'utf8');
+
+const credentials = { key: privateKey, cert: certificate };
+
+// Creating HTTPS server
+const httpsServer = https.createServer(credentials, app);
+
+httpsServer.listen(port, '0.0.0.0', () => {
+    console.log(`Spatial service running over HTTPS on port ${port}`);
 });
