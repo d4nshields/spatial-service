@@ -29,7 +29,6 @@ export DB_PASSWORD=<your db password>
 export DB_HOST=localhost
 export DB_PORT=5432
 export DB_NAME=boundaries
-export CLIENT_APP_TOKEN=WebCasino-DEV
 ```
 
 6. Run the service:

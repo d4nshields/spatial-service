@@ -20,7 +20,7 @@
             fetch(`http://localhost:3000/get_boundary_info?lat=${lat}&lon=${lon}&clientapp=WebCasino-DEV`)
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById('result').innerHTML = `Location: ${data.name}<br>Distance to border: ${data.distance_to_border_meters} meters`;
+                    document.getElementById('result').innerHTML = `Location: ${data.name}<br>Distance to border: ${parseFloat(data.distance_to_border_meters).toFixed(2)} meters`;
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);

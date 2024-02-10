@@ -28,10 +28,6 @@ app.get('/get_boundary_info', async (req, res) => {
         return res.status(400).json({ error: "Missing latitude or longitude parameter" });
     }
 
-    if (clientapp !== process.env.CLIENT_APP_TOKEN) {
-        return res.status(403).json({ error: "Unauthorized client application" });
-    }
-
     try {
         // First, find the state or province the point is in
         const locationQueryResult = await pool.query(
