@@ -17,20 +17,21 @@ This project provides a web service to find which state or province a given lati
 npm install
 ```
 3. Set up your PostgreSQL server with PostGIS extensions, create a database and import the `boundaries` data from the `data/` directory.
-4. Set up a postgres user with required grants for access to the 'boundaries' schema.
-```bash
-gunzip data/boundaries.sql.gz
-psql -U geo -d boundaries -f data/boundaries.sql
 
-```
-
-5. The following environment variables must be set in the environment for the server to find and connec to the PostGIS server:
+4. The following environment variables must be set in the environment for the server to find and connec to the PostGIS server:
 ```bash
 export DB_USER=<your db user>
 export DB_PASSWORD=<your db password>
 export DB_HOST=localhost
 export DB_PORT=5432
 export DB_NAME=boundaries
+```
+
+5. Set up a postgres user with required grants for access to the 'boundaries' schema.
+```bash
+gunzip data/boundaries.sql.gz
+psql -U $DB_USER -d $DB_NAME -f data/boundaries.sql
+
 ```
 
 6. Run the service:
