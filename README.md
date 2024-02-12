@@ -19,7 +19,8 @@ npm install
 3. Set up your PostgreSQL server with PostGIS extensions, create a database and import the `boundaries` data from the `data/` directory.
 4. Set up a postgres user with required grants for access to the 'boundaries' schema.
 ```bash
-pg_restore -U geo -d boundaries -1 data/boundaries.dump
+gunzip data/boundaries.sql.gz
+pg_restore -U geo -d boundaries -1 data/boundaries.sql
 ```
 
 5. The following environment variables must be set in the environment for the server to find and connec to the PostGIS server:
