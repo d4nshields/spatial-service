@@ -20,7 +20,8 @@ npm install
 4. Set up a postgres user with required grants for access to the 'boundaries' schema.
 ```bash
 gunzip data/boundaries.sql.gz
-pg_restore -U geo -d boundaries -1 data/boundaries.sql
+psql -U geo -d boundaries -f data/boundaries.sql
+
 ```
 
 5. The following environment variables must be set in the environment for the server to find and connec to the PostGIS server:
