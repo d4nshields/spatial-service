@@ -42,7 +42,6 @@ typings/
 
 # TypeScript compiled files
 *.tsbuildinfo
-dist/
 build/
 
 # Optional npm cache directory
@@ -79,7 +78,6 @@ out
 
 # Nuxt.js build / generate output
 .nuxt
-dist
 
 # VuePress build output
 .vuepress/dist
