@@ -1,21 +1,44 @@
 import express from 'express';
-import { Pool } from 'pg';
-import dotenv from 'dotenv';
 import cors from 'cors';
+import { Client } from 'pg';
+import * as ApiClient from 'kubernetes-client';
+const { KubeConfig, Request } = require('kubernetes-client'); 
 
-dotenv.config();
+const backend = new Request({ kubeconfig: new KubeConfig() });
+
+// In-cluster configuration (adjust if necessary)
+backend.kubeconfig.loadFromCluster(); 
+
+const k8sClient = new ApiClient.Client1_13({ backend, version: '1.13' });
+
+
+// Define a function to load database credentials from the Secret
+async function loadDatabaseCredentials() {
+  const namespace = process.env.NAMESPACE || 'default'; 
+  const secret = await k8sClient.api.v1.namespaces(namespace).secrets('spatial-service-db-creds').get();
+
+  const dbUser = secret.body.data.username; // Decode if Base64-encoded
+  const dbPassword = secret.body.data.password; // Decode if Base64-encoded
+
+  // Directly connect to your PostgreSQL database
+  const pool = new Client({
+    user: dbUser,
+    host: process.env.DB_HOST, // Ensure DB_HOST is set in your deployment
+    database: process.env.DB_NAME, // Ensure DB_NAME is set in your deployment
+    password: dbPassword,
+    port: parseInt(process.env.DB_PORT || '5432'),
+  });
+
+  await pool.connect(); // Establish the connection
+  return pool;
+
+}
+
+// Call the function to load credentials and connect to the database
+const spatialPool = await loadDatabaseCredentials();
 
 const app = express();
 const port = 3000; // or any port you prefer
-
-// PostgreSQL connection pool
-const pool = new Pool({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST,
-    database: process.env.DB_NAME,
-    password: process.env.DB_PASSWORD,
-    port: parseInt(process.env.DB_PORT || '5432'),
-});
 
 app.use(cors());
 app.use(express.json());
@@ -30,7 +53,7 @@ app.get('/get_boundary_info', async (req, res) => {
 
     try {
         // First, find the state or province the point is in
-        const locationQueryResult = await pool.query(
+        const locationQueryResult = await spatialPool.query(
             `SELECT name, iso_3166_2 FROM ne_10m_admin_1_states_provinces WHERE ST_Contains(geom, ST_SetSRID(ST_MakePoint($1, $2), 4326))`,
             [lon, lat]
         );
@@ -56,7 +79,7 @@ app.get('/get_boundary_info', async (req, res) => {
         console.log("Executing query:", distanceQuery);
         console.log("With parameters:", queryParams);
 
-        const distanceQueryResult = await pool.query(distanceQuery, queryParams);
+        const distanceQueryResult = await spatialPool.query(distanceQuery, queryParams);
 
         const { distance_meters } = distanceQueryResult.rows[0];
 
