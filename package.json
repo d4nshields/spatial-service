@@ -2,10 +2,10 @@
   "name": "spatial-service",
   "version": "1.0.0",
   "description": "A spatial service to find state or province boundaries and distances to them.",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "scripts": {
     "start": "ts-node src/index.ts",
-    "build": "tsc",
+    "build": "tsc -p service/tsconfig.json",
     "dev": "nodemon --ext ts --exec ts-node src/index.ts"
   },
   "repository": {

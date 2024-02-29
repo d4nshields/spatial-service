@@ -11,5 +11,5 @@ FROM node:lts-alpine AS production-stage
 WORKDIR /app
 COPY --from=build-stage /app/dist/ ./dist
 EXPOSE 3000 
-CMD ["node", "src/index.js"]
+CMD ["node", "dist/index.js"]
 
